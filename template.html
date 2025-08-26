@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>魔法课堂</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html2canvas for generating shareable card images -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+        .step { display: none; }
+        .active { display: block; }
+        .btn-pulse { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        /* Hidden container for the card to be generated, positioned off-screen */
+        #card-source-wrapper {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            width: 350px;
+        }
+    </style>
+</head>
+<body class="bg-amber-50 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border-4 border-gray-800">
+
+        <!-- Step 1: Introduction -->
+        <div id="step1" class="step p-8 text-center">
+            <h1 id="step1-title" class="text-2xl font-bold mb-4"></h1>
+            <p id="step1-desc" class="text-lg mb-6"></p>
+            <div id="step1-emoji" class="text-7xl mb-6"></div>
+            <button onclick="goToStep(2)" class="bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-3 px-6 rounded-full shadow-lg transition transform hover:scale-105 btn-pulse">
+                开始学习 ✨
+            </button>
+        </div>
+
+        <!-- Step 2: Core Learning -->
+        <div id="step2" class="step p-6">
+            <h1 id="step2-title" class="text-2xl font-bold text-center mb-4"></h1>
+            <p id="step2-desc" class="text-center mb-4 text-gray-600"></p>
+            
+            <!-- Dynamic Modules Container -->
+            <div id="step2-modules" class="space-y-4"></div>
+
+            <div class="text-center mt-6">
+                <button onclick="goToStep(3)" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition transform hover:scale-105 btn-pulse">
+                    我学会啦！
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 3: Reward System -->
+        <div id="step3" class="step p-8 text-center">
+            <h1 id="step3-title" class="text-2xl font-bold mb-4"></h1>
+            <p id="step3-desc" class="mb-6"></p>
+
+            <!-- Achievement Trophy -->
+            <div id="trophy-emoji" class="text-7xl mb-6 animate-bounce"></div>
+
+            <!-- Reward Modules Container -->
+            <div id="reward-modules" class="space-y-4"></div>
+
+            <button onclick="restart()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition transform hover:scale-105 mt-6">
+                再玩一次 🔄
+            </button>
+        </div>
+    </div>
+
+    <!-- Hidden container used by html2canvas to generate the card -->
+    <div id="card-source-wrapper"></div>
+
+    <script>
+        let currentContent = {};
+        let storyIndex = 0;
+
+        // --- Core Logic: Load content on page start ---
+        window.onload = () => {
+            const params = new URLSearchParams(window.location.search);
+            const contentId = params.get("contentId") || "toilet"; // Default to 'toilet'
+            loadContent(contentId);
+        };
+
+        async function loadContent(contentId) {
+            try {
+                const response = await fetch('content.json');
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const allContent = await response.json();
+                currentContent = allContent[contentId];
+                if (!currentContent) {
+                    console.error("Content not found for ID:", contentId);
+                    currentContent = allContent['toilet']; // Fallback to default
+                }
+                document.title = currentContent.pageTitle;
+                renderAllSteps();
+                goToStep(1);
+            } catch (error) {
+                console.error('Failed to load content:', error);
+                document.body.innerHTML = `<div class="text-center text-red-500 p-8">内容加载失败。请检查 content.json 文件是否存在且格式正确。</div>`;
+            }
+        }
+
+        // --- Rendering Functions ---
+        function renderAllSteps() {
+            renderStep1(currentContent.step1);
+            renderStep2(currentContent.step2);
+            renderStep3(currentContent.step3);
+        }
+
+        function renderStep1(data) {
+            document.getElementById('step1-title').innerText = data.title;
+            document.getElementById('step1-desc').innerText = data.description;
+            document.getElementById('step1-emoji').innerText = data.emoji;
+        }
+
+        function renderStep2(data) {
+            document.getElementById('step2-title').innerText = data.title;
+            document.getElementById('step2-desc').innerText = data.description;
+            const container = document.getElementById('step2-modules');
+            container.innerHTML = ''; // Clear previous modules
+
+            data.modules.forEach(module => {
+                let moduleHTML = '';
+                switch(module.type) {
+                    case 'english':
+                        moduleHTML = `
+                            <div class="bg-blue-50 p-3 rounded-lg text-center cursor-pointer transition hover:bg-blue-100" onclick="speak('${module.word}')">
+                                <span class="text-2xl">${module.emoji}</span> <span class="font-bold text-lg">${module.word}</span> <span class="text-gray-500">(点我发音)</span>
+                            </div>`;
+                        break;
+                    case 'interactiveButtons':
+                        moduleHTML = `
+                            <div>
+                                <div class="grid grid-cols-3 gap-3 text-center mb-3">
+                                    ${module.buttons.map(btn => `
+                                        <button onclick="updateStepDisplay('${btn.emoji}', '${btn.speakText}')" class="${btn.color} text-white p-3 rounded-lg shadow transition transform hover:scale-110">${btn.emoji} ${btn.text}</button>
+                                    `).join('')}
+                                </div>
+                                <div id="step-display" class="bg-amber-100 h-32 rounded-lg flex items-center justify-center text-6xl">${module.initialEmoji}</div>
+                            </div>`;
+                        break;
+                    case 'song':
+                        moduleHTML = `
+                            <div class="bg-white rounded-lg shadow p-4">
+                                <h2 class="text-lg font-bold mb-2">${module.title}</h2>
+                                <audio id="song-audio" src="${module.url}" loop></audio>
+                                <button id="song-btn" onclick="toggleSong()" class="bg-orange-400 hover:bg-orange-500 text-white px-4 py-2 rounded-full">▶️ 播放</button>
+                            </div>`;
+                        break;
+                    case 'story':
+                        moduleHTML = `
+                            <div class="bg-white rounded-lg shadow p-4">
+                                <h2 class="text-lg font-bold mb-2">${module.title}</h2>
+                                <p id="story-text" class="text-gray-700 min-h-[4rem]">${module.pages[0]}</p>
+                                <button onclick="nextStory()" class="mt-2 bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-full">下一页</button>
+                            </div>`;
+                        break;
+                }
+                container.innerHTML += moduleHTML;
+            });
+        }
+
+        function renderStep3(data) {
+            document.getElementById('step3-title').innerText = data.title;
+            document.getElementById('step3-desc').innerText = data.description;
+            document.getElementById('trophy-emoji').innerText = data.trophyEmoji;
+
+            const container = document.getElementById('reward-modules');
+            container.innerHTML = ''; // Clear previous rewards
+            
+            data.rewards.forEach(reward => {
+                let rewardHTML = '';
+                switch(reward.type) {
+                    case 'book':
+                        rewardHTML = `
+                            <div class="bg-white rounded-lg shadow p-4">
+                                <h2 class="text-lg font-bold mb-2">${reward.title}</h2>
+                                <p class="text-gray-700 mb-2">${reward.description}</p>
+                                <button onclick="showBook('${reward.url}')" class="bg-purple-400 hover:bg-purple-500 text-white px-4 py-2 rounded-full">📖 阅读绘本</button>
+                            </div>`;
+                        break;
+                    case 'video':
+                         rewardHTML = `
+                            <div class="bg-white rounded-lg shadow p-4">
+                                <h2 class="text-lg font-bold mb-2">${reward.title}</h2>
+                                <video class="w-full rounded-lg" controls><source src="${reward.url}" type="video/mp4"></video>
+                            </div>`;
+                        break;
+                    case 'card':
+                        rewardHTML = `
+                            <div class="bg-white rounded-lg shadow p-4">
+                                <h2 class="text-lg font-bold mb-2">${reward.title}</h2>
+                                <p class="text-gray-700 mb-2">${reward.description}</p>
+                                <button onclick="generateCard()" class="bg-green-400 hover:bg-green-500 text-white px-4 py-2 rounded-full">✨ 生成卡片</button>
+                                <div id="card-preview" class="mt-3 flex justify-center"></div>
+                            </div>`;
+                        break;
+                }
+                container.innerHTML += rewardHTML;
+            });
+        }
+
+        // --- UI Interaction Functions ---
+        function goToStep(step) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + step).classList.add('active');
+        }
+
+        function restart() {
+            const song = document.getElementById('song-audio');
+            if(song && !song.paused) {
+                song.pause();
+                song.currentTime = 0;
+            }
+            storyIndex = 0;
+            if (currentContent.step2.modules.find(m => m.type === 'story')) {
+                renderStep2(currentContent.step2);
+            }
+            goToStep(1);
+        }
+
+        function updateStepDisplay(emoji, word) {
+            document.getElementById('step-display').innerHTML = emoji;
+            speak(word);
+        }
+
+        function speak(text, lang = 'en-US') {
+            if (!('speechSynthesis' in window)) {
+                alert("抱歉，您的浏览器不支持语音功能。");
+                return;
+            }
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = lang;
+            window.speechSynthesis.speak(utter);
+        }
+
+        function toggleSong() {
+            const song = document.getElementById('song-audio');
+            const btn = document.getElementById('song-btn');
+            if (song.paused) {
+                song.play();
+                btn.innerText = '⏸️ 暂停';
+            } else {
+                song.pause();
+                btn.innerText = '▶️ 播放';
+            }
+        }
+
+        function nextStory() {
+            const storyModule = currentContent.step2.modules.find(m => m.type === 'story');
+            if (!storyModule) return;
+            storyIndex = (storyIndex + 1) % storyModule.pages.length;
+            document.getElementById('story-text').textContent = storyModule.pages[storyIndex];
+        }
+
+        function showBook(url) {
+            alert("即将打开绘本... 📖 (实际项目中会跳转到: " + url + ")");
+            // In a real project: window.open(url, '_blank');
+        }
+
+        function generateCard() {
+            const cardData = currentContent.step3.rewards.find(r => r.type === 'card').data;
+            const sourceWrapper = document.getElementById('card-source-wrapper');
+            
+            sourceWrapper.innerHTML = `
+                <div class="p-4 bg-gradient-to-br from-yellow-100 to-pink-100 shadow-lg border-2 border-white rounded-lg">
+                    <h2 class="text-xl font-bold mb-2 text-gray-800">${cardData.title}</h2>
+                    <p class="text-gray-700">${cardData.subtitle}</p>
+                    <div class="text-5xl mt-3 text-center">${cardData.emoji}</div>
+                </div>
+            `;
+            
+            const cardPreview = document.getElementById('card-preview');
+            cardPreview.innerHTML = '正在生成卡片...';
+
+            html2canvas(sourceWrapper.firstElementChild, { scale: 2, backgroundColor: null, useCORS: true }).then(canvas => {
+                canvas.style.width = "100%";
+                canvas.style.maxWidth = "200px";
+                canvas.style.borderRadius = "8px";
+                canvas.style.border = "2px solid #ddd";
+                
+                cardPreview.innerHTML = '';
+                cardPreview.appendChild(canvas);
+
+                const downloadLink = document.createElement('a');
+                downloadLink.href = canvas.toDataURL('image/png');
+                downloadLink.download = 'achievement-card.png';
+                downloadLink.innerHTML = '💾 下载卡片';
+                downloadLink.className = 'block mt-2 text-sm text-blue-500 hover:underline';
+                cardPreview.appendChild(downloadLink);
+            }).catch(err => {
+                console.error("oops, something went wrong!", err);
+                cardPreview.innerHTML = '<span class="text-red-500">生成失败</span>';
+            });
+        }
+    </script>
+</body>
+</html>
