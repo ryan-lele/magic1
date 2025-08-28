@@ -1,1 +1,127 @@
-{"toilet":{"pageTitle":"魔法课堂 - 我要上厕所","step1":{"title":"🚽 步骤 1：认识厕所","description":"这是我们上厕所和便便的地方哦！","emoji":"🚽"},"step2":{"title":"🧻 步骤 2：学习三部曲","description":"跟着下面的步骤，成为上厕所小能手！","modules":[{"type":"english","emoji":"🚽","word":"Toilet"},{"type":"interactiveButtons","initialEmoji":"👶","buttons":[{"emoji":"🚾","text":"坐下","color":"bg-blue-500","speakText":"Sit down"},{"emoji":"💦","text":"冲水","color":"bg-green-500","speakText":"Flush"},{"emoji":"🧼","text":"洗手","color":"bg-pink-500","speakText":"Wash hands"}]},{"type":"song","title":"🎶 上厕所儿歌","url":"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"},{"type":"story","title":"📖 小兔子故事","pages":["小兔子不敢去厕所，妈妈说：“别怕，我陪你！”","小兔子坐下，咕噜咕噜，好轻松。","哗啦啦冲水声，小兔子笑了。","洗洗小手，干净真棒！"]}]},"step3":{"title":"🎉 步骤 3：成就解锁","description":"太棒啦！你学会了自己上厕所！","trophyEmoji":"🏆","rewards":[{"type":"book","title":"📖 解锁奖励绘本","description":"“小兔子上厕所”的专属绘本！","url":"/book/toilet-story.html"},{"type":"video","title":"🎬 动画版绘本","url":"https://www.w3schools.com/html/mov_bbb.mp4"},{"type":"card","title":"📸 成就卡片","description":"生成一张可分享到朋友圈的卡片！","data":{"title":"🎉 我完成了：自己上厕所！","subtitle":"AI 魔法童装 · 成长第一步","emoji":"🚽 🏆"}}]}}}
+{
+  "toilet": {
+    "pageTitle": "魔法课堂 - 我要上厕所",
+    "step1": {
+      "title": "🚽 步骤 1：认识厕所",
+      "description": "这是我们上厕所和便便的地方哦！",
+      "emoji": "🚽"
+    },
+    "step2": {
+      "title": "🧻 步骤 2：学习三部曲",
+      "description": "跟着下面的步骤，成为上厕所小能手！",
+      "modules": [
+        {
+          "type": "english",
+          "emoji": "🚽",
+          "word": "Toilet"
+        },
+        {
+          "type": "interactiveButtons",
+          "initialEmoji": "👶",
+          "buttons": [
+            { "emoji": "🚾", "text": "坐下", "color": "bg-blue-500", "speakText": "Sit down" },
+            { "emoji": "💦", "text": "冲水", "color": "bg-green-500", "speakText": "Flush" },
+            { "emoji": "🧼", "text": "洗手", "color": "bg-pink-500", "speakText": "Wash hands" }
+          ]
+        },
+        {
+          "type": "song",
+          "title": "🎶 上厕所儿歌",
+          "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+        },
+        {
+          "type": "story",
+          "title": "📖 小兔子故事",
+          "pages": [
+            "小兔子不敢去厕所，妈妈说：“别怕，我陪你！”",
+            "小兔子坐下，咕噜咕噜，好轻松。",
+            "哗啦啦冲水声，小兔子笑了。",
+            "洗洗小手，干净真棒！"
+          ]
+        }
+      ]
+    },
+    "step3": {
+      "title": "🎉 步骤 3：成就解锁",
+      "description": "太棒啦！你学会了自己上厕所！",
+      "trophyEmoji": "🏆",
+      "rewards": [
+        {
+          "type": "book",
+          "title": "📖 解锁奖励绘本",
+          "description": "“小兔子上厕所”的专属绘本！",
+          "url": "/book/toilet-story.html"
+        },
+        {
+          "type": "video",
+          "title": "🎬 动画版绘本",
+          "url": "https://www.w3schools.com/html/mov_bbb.mp4"
+        },
+        {
+          "type": "card",
+          "title": "📸 成就卡片",
+          "description": "生成一张可分享到朋友圈的卡片！",
+          "data": {
+            "title": "🎉 我完成了：自己上厕所！",
+            "subtitle": "AI 魔法童装 · 成长第一步",
+            "emoji": "🚽 🏆"
+          }
+        }
+      ]
+    }
+  },
+  "eat": {
+    "pageTitle": "魔法课堂 - 我要自己吃饭",
+    "step1": {
+      "title": "🍚 步骤 1：认识餐具",
+      "description": "用自己的小勺子，把饭饭送进嘴巴里！",
+      "emoji": "🥄"
+    },
+    "step2": {
+      "title": "🥣 步骤 2：吃饭三部曲",
+      "description": "学习吃饭的好习惯！",
+      "modules": [
+        {
+          "type": "english",
+          "emoji": "🍚",
+          "word": "Eat"
+        },
+        {
+          "type": "interactiveButtons",
+          "initialEmoji": "😋",
+          "buttons": [
+            { "emoji": "🥄", "text": "拿勺子", "color": "bg-blue-500", "speakText": "Spoon" },
+            { "emoji": "👄", "text": "慢慢吃", "color": "bg-green-500", "speakText": "Chew" },
+            { "emoji": "🥰", "text": "吃光光", "color": "bg-pink-500", "speakText": "Finish" }
+          ]
+        },
+        {
+          "type": "story",
+          "title": "📖 小熊吃饭故事",
+          "pages": [
+            "小熊肚子饿了，妈妈做了香喷喷的饭。",
+            "小熊拿起勺子，啊呜一口，真好吃！",
+            "不一会儿，碗里就干干净净啦！"
+          ]
+        }
+      ]
+    },
+    "step3": {
+      "title": "🎉 步骤 3：成就解锁",
+      "description": "太棒啦！你学会了自己吃饭！",
+      "trophyEmoji": "🌟",
+      "rewards": [
+        {
+          "type": "card",
+          "title": "📸 成就卡片",
+          "description": "生成一张吃饭小能手的分享卡片！",
+          "data": {
+            "title": "🎉 我完成了：自己吃饭！",
+            "subtitle": "AI 魔法童装 · 成长第二步",
+            "emoji": "🍚 🌟"
+          }
+        }
+      ]
+    }
+  }
+}
